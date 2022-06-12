@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="my_state_chart.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="state_chart.h" />
     <ClInclude Include="state_builder.h" />

@@ -9,8 +9,9 @@ public:
 	void start();
 
 	void send_signal(signal s);
+	void tick(float delta_seconds);
 
-	state_composite_creator root_creator;
-	state_composite_ptr root;
+	state_creator root_creator;
+	state_ptr root;
 
 };
