@@ -14,10 +14,7 @@ public:
 template<typename State_Chart_Type, typename Root_Composite_State>
 State_Chart_Type state_chart_builder<State_Chart_Type, Root_Composite_State>::state_chart_builder::create()
 {
-	State_Chart_Type ret;
-	ret.root_creator = Root_Composite_State::create();
-
-	return ret;
+	return { Root_Composite_State::create() };
 }
 
 template<typename State_Type>
@@ -29,7 +26,7 @@ public:
 
 };
 
-template<typename State_Composite_Type, typename Nested_States>
+template<typename State_Composite_Type, typename Nested_States, typename Transitions>
 class state_composite_builder
 {
 public:
@@ -45,7 +42,6 @@ public:
 	static state_creator create();
 };
 
-
 template<class ...T>
 class state_list_builder
 {
@@ -54,31 +50,50 @@ public:
 	static state_registry create();
 };
 
+template<typename From, signal Sig, typename To>
+class transition_query_builder
+{
+public:
+
+	static transition_query create();
+};
+
+template<class ...T>
+class transition_list_builder
+{
+public:
+
+	static transition_querier create();
+};
+
 template<typename State_Type>
 state_creator state_builder<State_Type>::state_builder::create()
 {
-	state_creator ret;
-	ret.id = State_Type::id();
-
-	ret.fn = [](state_chart* chart, state_composite* parent)
+	state_creator ret
 	{
-		return state::create<State_Type>(chart, parent);
+		State_Type::id(),
+		[](state_chart* chart, state_composite* parent)
+		{
+			return state::create<State_Type>(chart, parent);
+		}
 	};
 
 	return ret;
 }
 
-template<typename State_Composite_Type, typename Nested_States>
-state_creator state_composite_builder<State_Composite_Type, Nested_States>::state_composite_builder::create()
+template<typename State_Composite_Type, typename Nested_States, typename Transitions>
+state_creator state_composite_builder<State_Composite_Type, Nested_States, Transitions>::state_composite_builder::create()
 {
-	state_creator ret;
-	ret.id = State_Composite_Type::id();
-
-	ret.fn = [](state_chart* chart, state_composite* parent)
+	state_creator ret
 	{
-		state_registry reg = Nested_States::create();
+		State_Composite_Type::id(),
+		[](state_chart* chart, state_composite* parent)
+		{
+			state_registry reg = Nested_States::create();
+			transition_querier querier = Transitions::create();
 
-		return state_composite::create<State_Composite_Type>(chart, parent, std::move(reg));
+			return state_composite::create<State_Composite_Type>(chart, parent, std::move(reg), std::move(querier));
+		}
 	};
 
 	return ret;
@@ -87,14 +102,14 @@ state_creator state_composite_builder<State_Composite_Type, Nested_States>::stat
 template<typename State_Regioned_Type, typename Regioned_States>
 state_creator state_regioned_builder<State_Regioned_Type, Regioned_States>::state_regioned_builder::create()
 {
-	state_creator ret;
-	ret.id = State_Regioned_Type::id();
-
-	ret.fn = [](state_chart* chart, state_composite* parent)
+	state_creator ret
 	{
-		state_registry reg = Regioned_States::create();
-
-		return state_regioned::create<State_Regioned_Type>(chart, parent, std::move(reg));
+		State_Regioned_Type::id(),
+		[](state_chart* chart, state_composite* parent)
+		{
+			state_registry reg = Regioned_States::create();
+			return state_regioned::create<State_Regioned_Type>(chart, parent, std::move(reg));
+		}
 	};
 
 	return ret;
@@ -104,7 +119,22 @@ template<typename ...T>
 inline state_registry state_list_builder<T...>::state_list_builder::create()
 {
 	state_registry ret;
-	(ret.reg.insert(std::make_pair(T::create().id, T::create())), ...);
+	(ret.register_state(T::create()), ...);
+
+	return ret;
+}
+
+template<typename From, signal Sig, typename To>
+inline transition_query transition_query_builder<From, Sig, To>::create()
+{
+	return { To::id(), Sig, From::id() };
+}
+
+template<class ...T>
+inline transition_querier transition_list_builder<T...>::create()
+{
+	transition_querier ret;
+	(ret.register_query(T::create()), ...);
 
 	return ret;
 }
