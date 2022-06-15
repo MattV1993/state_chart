@@ -4,6 +4,10 @@ void state::on_start()
 {
 }
 
+void state::on_exit()
+{
+}
+
 bool state::send_signal(signal s)
 {
 	return on_signal(s);
@@ -11,6 +15,11 @@ bool state::send_signal(signal s)
 
 void state::tick(float delta_seconds)
 {
+}
+
+const std::string state::get_id() const
+{
+	return id;
 }
 
 state_chart* state::get_chart()
@@ -23,10 +32,11 @@ state_composite* state::get_parent()
 	return parent;
 }
 
-void state::init(state_chart* chart, state_composite* parent)
+void state::init(state_chart* chart, state_composite* parent, const std::string& id)
 {
 	this->chart = chart;
 	this->parent = parent;
+	this->id = id;
 }
 
 bool state::on_signal(signal s)
@@ -70,7 +80,7 @@ state_registry& state_composite::get_registry()
 
 bool state_composite::try_transistion_from_signal(signal s)
 {
-	auto new_state_id = querier.request_transition_id(current_state->id(), s);
+	auto new_state_id = querier.request_transition_id(current_state->get_id(), s);
 
 	if (new_state_id.has_value() == false)
 	{

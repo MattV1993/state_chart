@@ -71,7 +71,7 @@ state_creator state_builder<State_Type>::state_builder::create()
 {
 	state_creator ret
 	{
-		State_Type::id(),
+		State_Type::id_s(),
 		[](state_chart* chart, state_composite* parent)
 		{
 			return state::create<State_Type>(chart, parent);
@@ -86,7 +86,7 @@ state_creator state_composite_builder<State_Composite_Type, Nested_States, Trans
 {
 	state_creator ret
 	{
-		State_Composite_Type::id(),
+		State_Composite_Type::id_s(),
 		[](state_chart* chart, state_composite* parent)
 		{
 			state_registry reg = Nested_States::create();
@@ -104,7 +104,7 @@ state_creator state_regioned_builder<State_Regioned_Type, Regioned_States>::stat
 {
 	state_creator ret
 	{
-		State_Regioned_Type::id(),
+		State_Regioned_Type::id_s(),
 		[](state_chart* chart, state_composite* parent)
 		{
 			state_registry reg = Regioned_States::create();
@@ -127,7 +127,7 @@ inline state_registry state_list_builder<T...>::state_list_builder::create()
 template<typename From, signal Sig, typename To>
 inline transition_query transition_query_builder<From, Sig, To>::create()
 {
-	return { To::id(), Sig, From::id() };
+	return { From::id_s(), Sig, To::id_s() };
 }
 
 template<class ...T>

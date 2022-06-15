@@ -42,12 +42,15 @@ public:
 	virtual ~state() = default;
 
 	virtual void on_start();
+	virtual void on_exit();
 
 	virtual bool send_signal(signal s);
 
 	virtual void tick(float delta_seconds);
 
-	static std::string id() { return "state"; };
+	const std::string get_id() const;
+
+	static std::string id_s() { return "state"; };
 
 	template<typename State_Type>
 	static state_ptr create(state_chart* chart, state_composite* parent);
@@ -65,7 +68,7 @@ protected:
 	state_chart* get_chart();
 	state_composite* get_parent();
 
-	void init(state_chart* chart, state_composite* parent);
+	void init(state_chart* chart, state_composite* parent, const std::string& id);
 
 	virtual bool on_signal(signal s);
 
@@ -73,6 +76,8 @@ private:
 
 	state_chart* chart;
 	state_composite* parent;
+
+	std::string id;
 };
 
 class state_creator
@@ -191,7 +196,7 @@ inline state_ptr state::create(state_chart* chart, state_composite* parent)
 {
 	state_ptr ret = std::make_unique<State_Type>();
 
-	ret->init(chart, parent);
+	ret->init(chart, parent, State_Type::id_s());
 	ret->on_start();
 
 	return ret;
@@ -205,7 +210,7 @@ inline state_composite_ptr state_composite::create(state_chart* chart, state_com
 	ret->registry = std::move(registry);
 	ret->querier = std::move(querier);
 
-	ret->init(chart, parent);
+	ret->init(chart, parent, State_Composite_Type::id_s());
 	ret->change_state(ret->registry.get_default_state().get_id());
 	ret->on_start();
 
@@ -222,7 +227,7 @@ inline state_regioned_ptr state_regioned::create(state_chart* chart, state_compo
 		ret->regions.push_back(reg(chart, nullptr));
 	}
 
-	ret->init(chart, parent);
+	ret->init(chart, parent, State_Regioned_Type::id_s());
 	ret->on_start();
 
 

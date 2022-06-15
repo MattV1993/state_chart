@@ -37,7 +37,7 @@ class state_start : public my_state_regioned
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_start";
 	}
@@ -47,7 +47,7 @@ class state_movement : public my_state_composite
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_movement";
 	}
@@ -57,7 +57,7 @@ class state_sprint : public my_state_composite
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_sprint";
 	}
@@ -67,19 +67,9 @@ class state_stationary : public my_state_composite
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_stationary";
-	}
-
-	bool on_signal(signal s) override
-	{
-		if (s == signal::action)
-		{
-			get_parent()->change_state("state_jog");
-		}
-
-		return true;
 	}
 };
 
@@ -87,7 +77,7 @@ class state_jog : public my_state_composite
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_jog";
 	}
@@ -97,7 +87,7 @@ class state_stationary_idle : public my_state
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_stationary_idle";
 	}
@@ -107,7 +97,7 @@ class state_stationary_attack : public my_state
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_stationary_attack";
 	}
@@ -117,7 +107,7 @@ class state_sprint_idle : public my_state
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_sprint_idle";
 	}
@@ -127,7 +117,7 @@ class state_sprint_attack : public my_state
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_sprint_attack";
 	}
@@ -137,7 +127,7 @@ class state_jog_idle : public my_state
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_jog_idle";
 	}
@@ -147,7 +137,7 @@ class state_jog_attack : public my_state
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_jog_attack";
 	}
@@ -157,7 +147,7 @@ class state_block_holder : public state_composite
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_block_holder";
 	}
@@ -167,7 +157,7 @@ class state_block : public my_state
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_block";
 	}
@@ -182,7 +172,7 @@ public:
 		int a = 0;
 	}
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_not_block";
 	}
@@ -192,7 +182,7 @@ class state_zoom_holder : public state_composite
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_zoom_holder";
 	}
@@ -202,7 +192,7 @@ class state_zoom : public my_state
 {
 public:
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_zoom";
 	}
@@ -217,7 +207,7 @@ public:
 		int a = 0;
 	}
 
-	static std::string id()
+	static std::string id_s()
 	{
 		return "state_not_zoom";
 	}
